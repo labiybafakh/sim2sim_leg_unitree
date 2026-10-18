@@ -1,0 +1,5 @@
+/* Export MuJoCo's C API; hide bundled C++ dependencies from ROS/Fast DDS. */
+{
+  global: mj*;
+  local: *;
+};

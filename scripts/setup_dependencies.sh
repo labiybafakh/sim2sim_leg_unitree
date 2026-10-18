@@ -50,6 +50,7 @@ printf 'Installed ONNX Runtime 1.22.2 in %s\n' "$install_dir"
 
 cmake -S "$mujoco_root/mujoco" -B "$mujoco_root/build" \
   -DCMAKE_BUILD_TYPE=Release \
+  "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,--version-script=$workspace_root/scripts/mujoco.exports" \
   -DCMAKE_INSTALL_PREFIX="$mujoco_root/install" \
   -DCMAKE_INSTALL_LIBDIR=lib \
   -DMUJOCO_BUILD_EXAMPLES=OFF \
