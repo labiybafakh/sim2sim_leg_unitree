@@ -1,0 +1,6 @@
+[submodule "unitree_leg_mujoco/third_party/mujoco"]
+	path = unitree_leg_mujoco/third_party/mujoco
+	url = https://github.com/google-deepmind/mujoco.git
+[submodule "policy_deployment/third_party/onnxruntime/source"]
+	path = policy_deployment/third_party/onnxruntime/source
+	url = https://github.com/microsoft/onnxruntime.git

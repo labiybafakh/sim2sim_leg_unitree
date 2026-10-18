@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>unitree_leg_mujoco</name>
+  <version>0.1.0</version>
+  <description>MuJoCo ROS 2 bridge for the twelve-joint Unitree leg policy.</description>
+  <maintainer email="maintainer@example.com">Unitree leg maintainers</maintainer>
+  <license>BSD-3-Clause</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>ament_index_cpp</depend>
+  <depend>policy_deployment</depend>
+  <depend>std_srvs</depend>
+  <depend>jsoncpp</depend>
+  <depend>libglfw3-dev</depend>
+  <test_depend>rclpy</test_depend>
+  <test_depend>ament_index_python</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

@@ -1,0 +1,7 @@
+/build/
+/install/
+/log/
+__pycache__/
+/MUJOCO_LOG.TXT
+/third_party/build/
+/third_party/install/

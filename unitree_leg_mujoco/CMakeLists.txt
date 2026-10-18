@@ -1,0 +1,52 @@
+cmake_minimum_required(VERSION 3.28)
+project(unitree_leg_mujoco VERSION 0.1.0 LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+find_package(ament_cmake REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(policy_deployment REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(jsoncpp CONFIG REQUIRED)
+option(WITH_VIEWER "Build the GLFW viewer (disable for headless deployment)" ON)
+
+set(MUJOCO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/third_party/install" CACHE PATH
+    "Source-built MuJoCo install prefix")
+find_package(mujoco 3.3.7 EXACT CONFIG REQUIRED
+  PATHS "${MUJOCO_ROOT}/lib/cmake/mujoco" NO_DEFAULT_PATH)
+
+add_library(simulation_core STATIC src/simulation.cpp src/elastic_support.cpp)
+target_include_directories(simulation_core PUBLIC include)
+target_link_libraries(simulation_core PUBLIC mujoco::mujoco JsonCpp::JsonCpp)
+target_compile_options(simulation_core PRIVATE -Wall -Wextra -Wpedantic)
+
+add_executable(simulation src/simulation_node.cpp)
+target_link_libraries(simulation simulation_core)
+if(WITH_VIEWER)
+  find_package(glfw3 REQUIRED)
+  target_sources(simulation PRIVATE src/viewer.cpp)
+  target_link_libraries(simulation glfw)
+  target_compile_definitions(simulation PRIVATE UNITREE_LEG_MUJOCO_WITH_VIEWER)
+endif()
+ament_target_dependencies(simulation rclcpp ament_index_cpp policy_deployment std_srvs)
+target_compile_options(simulation PRIVATE -Wall -Wextra -Wpedantic)
+set_target_properties(simulation PROPERTIES INSTALL_RPATH "$ORIGIN/..")
+install(TARGETS simulation DESTINATION lib/${PROJECT_NAME})
+# Bundle the prebuilt engine beside the ROS executable's library directory.
+install(FILES $<TARGET_FILE:mujoco::mujoco> DESTINATION lib)
+install(FILES third_party/mujoco/LICENSE DESTINATION share/${PROJECT_NAME}/licenses RENAME MuJoCo-LICENSE)
+install(FILES scene_29dof.xml g1_29dof.xml README.md DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY meshes DESTINATION share/${PROJECT_NAME})
+
+if(BUILD_TESTING)
+  enable_testing()
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  add_executable(simulation_test tests/simulation_test.cpp)
+  target_link_libraries(simulation_test PRIVATE simulation_core)
+  add_test(NAME simulation_core COMMAND simulation_test "${CMAKE_CURRENT_SOURCE_DIR}")
+  add_test(NAME ros_bridge COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/tests/ros_bridge_test.py" $<TARGET_FILE:simulation>)
+  set_tests_properties(ros_bridge PROPERTIES TIMEOUT 30)
+endif()
+ament_package()
