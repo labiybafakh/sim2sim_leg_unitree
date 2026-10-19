@@ -1,8 +1,1 @@
-build/
-install/
-log/
-third_party/onnxruntime/build/
-third_party/onnxruntime/install/
-__pycache__/
-models/*.onnx
-models/*.onnx.data
+__pycache__

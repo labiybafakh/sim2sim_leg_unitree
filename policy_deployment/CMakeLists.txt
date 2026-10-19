@@ -29,12 +29,21 @@ target_link_libraries(policy_node PRIVATE
 set_target_properties(policy_node PROPERTIES INSTALL_RPATH "$ORIGIN/..")
 
 install(TARGETS policy_node DESTINATION lib/${PROJECT_NAME})
+install(PROGRAMS scripts/policy_node.py DESTINATION lib/${PROJECT_NAME} RENAME policy_node_py)
+install(FILES scripts/policy_runtime.py DESTINATION lib/${PROJECT_NAME})
 # Bundle runtime shared libraries so installed programs find them with a relative RPATH.
 install(DIRECTORY "${ONNXRUNTIME_ROOT}/lib/" DESTINATION lib FILES_MATCHING PATTERN "libonnxruntime*.so*")
 install(FILES third_party/onnxruntime/source/LICENSE third_party/onnxruntime/source/ThirdPartyNotices.txt
   DESTINATION share/${PROJECT_NAME}/licenses)
 install(FILES README.MD LICENSE DESTINATION share/${PROJECT_NAME})
+install(FILES README_PYTHON.md DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY config launch models DESTINATION share/${PROJECT_NAME})
 
 ament_export_dependencies(rosidl_default_runtime)
+if(BUILD_TESTING)
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  enable_testing()
+  add_test(NAME python_policy COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_python_policy.py")
+endif()
 ament_package()
