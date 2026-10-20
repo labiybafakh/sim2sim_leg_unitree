@@ -1,0 +1,14 @@
+[project]
+name = "sim2sim-checks"
+version = "0.1.0"
+requires-python = ">=3.10,<3.13"
+dependencies = ["mujoco==3.3.7", "numpy>=1.24", "torch>=2.2"]
+
+# Use CPU PyTorch; inference does not need CUDA.
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
